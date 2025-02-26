@@ -22,6 +22,19 @@ SWEP.DrawAmmo = false
 SWEP.Primary.Ammo		= ""
 SWEP.Secondary.Ammo		= ""
 
+local function createRagdoll(ent)
+    if not IsValid(ent) then return end
+    local r = ents.Create("prop_ragdoll")
+    r:SetPos(ent:GetPos())
+    r:SetAngles(ent:GetAngles())
+    r:SetModel(ent:GetModel())
+	r:SetColor(ent:GetColor())
+    r:Spawn()
+    r.OwnerINT = ent:EntIndex()
+    r.PhysgunPickup = false
+    r.CanTool = false
+end
+
 function SWEP:Initialize()
     self:SetWeaponHoldType("ar2")
 end
@@ -43,6 +56,7 @@ local function shootBullet(self)
     for k, v in pairs(ents.FindAlongRay(ply:GetShootPos(), ply:GetEyeTrace().HitPos, Vector(-5,-5,-5), Vector(5,5,5))) do
 		if IsValid(v) and (v:IsNPC() or v:IsNextBot() and (v ~= ply) ) then
 		    Fire(v, "Kill")
+			createRagdoll(v)
 			else
 			if v:IsPlayer() and not v:GetOwner()==self.Owner then
 			    CreateRagdoll(v)
