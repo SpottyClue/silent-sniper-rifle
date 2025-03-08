@@ -86,7 +86,7 @@ function SWEP:SecondaryAttack()
 			ply:EmitSound("Default.Zoom")
             zoom = 2
         else
-            ply:SetFOV(0, 0.1)
+            ply:SetFOV(0, 0.2)
 			ply:EmitSound("Default.Zoom")
             zoom = 0
         end
