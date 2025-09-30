@@ -5,11 +5,10 @@ local Fire = e.Fire
 local CreateRagdoll = p.CreateRagdoll
 local KillSilent = p.KillSilent
 
-SWEP.Author = "1999"
-SWEP.Category = "1999's Weapons (Admin)"
+SWEP.Category = "1999"
 SWEP.PrintName = "Silent Sniper Rifle"
+SWEP.Instructions = "An sniper rifle with pure silence. Perfect for stealth."
 
-SWEP.ViewModelFOV		= 57
 SWEP.ViewModel			= "models/weapons/cstrike/c_snip_scout.mdl"
 SWEP.WorldModel			= "models/weapons/w_snip_scout.mdl"
 
@@ -17,10 +16,13 @@ SWEP.Spawnable = true
 SWEP.AdminOnly = true
 
 SWEP.UseHands = true
-SWEP.DrawAmmo = false
 
-SWEP.Primary.Ammo		= ""
-SWEP.Secondary.Ammo		= ""
+SWEP.Primary.DefaultClip = 9999
+SWEP.Primary.ClipSize = 10
+SWEP.Primary.Automatic = true
+SWEP.Primary.Ammo = "357"
+
+SWEP.Slot = 2
 
 local function createRagdoll(ent)
     if not IsValid(ent) then return end
@@ -33,6 +35,15 @@ local function createRagdoll(ent)
     r.OwnerINT = ent:EntIndex()
     r.PhysgunPickup = false
     r.CanTool = false
+	
+	for i = 0, r:GetPhysicsObjectCount()-1 do
+        local bone = r:GetPhysicsObjectNum(i)
+        local pos, ang = ent:GetBonePosition(r:TranslatePhysBoneToBone(i))
+        if bone and pos and ang then
+            bone:SetAngles(ang)
+            bone:SetPos(pos)
+        end
+    end
 end
 
 function SWEP:Initialize()
@@ -42,7 +53,7 @@ end
 function SWEP:AdjustMouseSensitivity()
     if self.Owner:GetFOV() < 35 then
 	    return 0.23
-	    else
+	else
 	    return 1
 	end
 end
@@ -64,9 +75,11 @@ local function shootBullet(self)
 			end
 		end
 	end
+
+	self:TakePrimaryAmmo(1)
 	self:ShootEffects()
 	self:SetNextPrimaryFire(CurTime() + 1.3)
-	ply:ViewPunch(Angle(math.Rand(-0.5,-0.5)))
+	ply:ViewPunch(Angle(math.Rand(-0.7, -0.7)))
 end
 
 function SWEP:PrimaryAttack()
